@@ -76,6 +76,7 @@ int main(int argc, char **argv)
       n = rand() % 3;
       v.x = (v.x + p[n].x) / 2. + .5;
       v.y = (v.y + p[n].y) / 2. + .5;
+      data[v.y * width * info.bits_per_pixel / 8 + v.x * info.bits_per_pixel / 8 + 3] = 255;
       for (n = 0; n < 3; n++) {
         d[n] = (v.x - p[n].x) * (v.x - p[n].x) + (v.y - p[n].y) * (v.y - p[n].y);
         data[v.y * width * info.bits_per_pixel / 8 + v.x * info.bits_per_pixel / 8 + 2 - n] = (1 - d[n] / (3. * r * r)) * 255;

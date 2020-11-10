@@ -64,6 +64,7 @@ int main(int argc, char **argv)
 
     for (i = 0; i < h; i++) {
       for (j = 0; j < w; j++) {
+        data[info.bits_per_pixel / 8 * j + 3] = 255;
         data[info.bits_per_pixel / 8 * j + 2] = r;
         data[info.bits_per_pixel / 8 * j + 1] = g;
         data[info.bits_per_pixel / 8 * j    ] = b;

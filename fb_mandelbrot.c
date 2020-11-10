@@ -51,6 +51,13 @@ int main(int argc, char **argv)
   buffer = mmap(NULL, len, PROT_WRITE, MAP_SHARED, fd, 0);
   gettimeofday(&start, NULL);
 
+  /* Set the alpha channel to opaque across the whole image area. */
+  for (i = 0; i < height; i++) {
+    for (j = 0; j < width; j++) {
+      buffer[(posy + i) * info.xres * info.bits_per_pixel / 8 + (posx + j) * info.bits_per_pixel / 8 + 3] = 255;
+    }
+  }
+
   while (iters <= 48) {
     for (i = 0; i < height; i++) {
       for (j = 0; j < width; j++) {
