@@ -46,8 +46,14 @@ int main(int argc, char **argv)
   if (getenv("POSY")) posy = atoi(getenv("POSY"));
   else posy = 0;
 
-  len = info.xres * info.yres * info.bits_per_pixel / 8;
-  buffer = mmap(NULL, len, PROT_WRITE, MAP_SHARED, fd, 0);
+  // Get fixed screen information
+  struct fb_fix_screeninfo finfo;
+	if (ioctl(fd, FBIOGET_FSCREENINFO, &finfo)) {
+		printf("Error reading fixed information.\n");
+    exit(EXIT_FAILURE);
+  }
+
+  buffer = mmap(NULL, finfo.smem_len, PROT_WRITE, MAP_SHARED, fd, 0);
   w = width >> 2;
   h = height >> 2;
   count = 0;
@@ -60,7 +66,7 @@ int main(int argc, char **argv)
     b = rand() % 256;
     x = rand() % (width - w);
     y = rand() % (height - h);
-    data = buffer + (posy + y) * info.xres * info.bits_per_pixel / 8 + (posx + x) * info.bits_per_pixel / 8;
+    data = buffer + (posy + y) * finfo.line_length + (posx + x) * info.bits_per_pixel / 8;
 
     for (i = 0; i < h; i++) {
       for (j = 0; j < w; j++) {
@@ -69,7 +75,7 @@ int main(int argc, char **argv)
         data[info.bits_per_pixel / 8 * j + 1] = g;
         data[info.bits_per_pixel / 8 * j    ] = b;
       }
-      data += info.xres * info.bits_per_pixel / 8;
+      data += finfo.line_length;
     }
 
     count++;

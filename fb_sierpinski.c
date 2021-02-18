@@ -55,7 +55,14 @@ int main(int argc, char **argv)
   if (getenv("POSY")) posy = atoi(getenv("POSY"));
   else posy = 0;
 
-  len = info.xres * info.yres * info.bits_per_pixel / 8;
+  // Get fixed screen information
+  struct fb_fix_screeninfo finfo;
+	if (ioctl(fd, FBIOGET_FSCREENINFO, &finfo)) {
+		printf("Error reading fixed information.\n");
+    exit(EXIT_FAILURE);
+  }
+
+  len = finfo.smem_len;
   buffer = mmap(NULL, len, PROT_WRITE, MAP_SHARED, fd, 0);
   data = malloc(width * height * info.bits_per_pixel / 8);
   angle = 0;
@@ -76,15 +83,15 @@ int main(int argc, char **argv)
       n = rand() % 3;
       v.x = (v.x + p[n].x) / 2. + .5;
       v.y = (v.y + p[n].y) / 2. + .5;
-      data[v.y * width * info.bits_per_pixel / 8 + v.x * info.bits_per_pixel / 8 + 3] = 255;
+      data[v.y * finfo.line_length + v.x * info.bits_per_pixel / 8 + 3] = 255;
       for (n = 0; n < 3; n++) {
         d[n] = (v.x - p[n].x) * (v.x - p[n].x) + (v.y - p[n].y) * (v.y - p[n].y);
-        data[v.y * width * info.bits_per_pixel / 8 + v.x * info.bits_per_pixel / 8 + 2 - n] = (1 - d[n] / (3. * r * r)) * 255;
+        data[v.y * finfo.line_length + v.x * info.bits_per_pixel / 8 + 2 - n] = (1 - d[n] / (3. * r * r)) * 255;
       }
     }
 
     for (i = 0; i < height; i++)
-      memcpy(buffer + (posy + i) * info.xres * info.bits_per_pixel / 8 + posx * info.bits_per_pixel / 8, data + i * width * info.bits_per_pixel / 8, width * info.bits_per_pixel / 8);
+      memcpy(buffer + (posy + i) * finfo.line_length + posx * info.bits_per_pixel / 8, data + i * finfo.line_length, width * info.bits_per_pixel / 8);
 
     frames++;
     gettimeofday(&now, NULL);
