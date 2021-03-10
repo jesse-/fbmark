@@ -55,7 +55,7 @@ int main(int argc, char **argv)
   if (getenv("POSY")) posy = atoi(getenv("POSY"));
   else posy = 0;
 
-  len = info.xres * info.yres * info.bits_per_pixel / 8;
+  len = info.xres_virtual * info.yres_virtual * info.bits_per_pixel / 8;
   buffer = mmap(NULL, len, PROT_WRITE, MAP_SHARED, fd, 0);
   data = malloc(width * height * info.bits_per_pixel / 8);
   angle = 0;
@@ -84,7 +84,7 @@ int main(int argc, char **argv)
     }
 
     for (i = 0; i < height; i++)
-      memcpy(buffer + (posy + i) * info.xres * info.bits_per_pixel / 8 + posx * info.bits_per_pixel / 8, data + i * width * info.bits_per_pixel / 8, width * info.bits_per_pixel / 8);
+      memcpy(buffer + (posy + i) * info.xres_virtual * info.bits_per_pixel / 8 + posx * info.bits_per_pixel / 8, data + i * width * info.bits_per_pixel / 8, width * info.bits_per_pixel / 8);
 
     frames++;
     gettimeofday(&now, NULL);

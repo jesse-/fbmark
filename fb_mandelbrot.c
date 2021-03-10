@@ -47,14 +47,14 @@ int main(int argc, char **argv)
   if (getenv("POSY")) posy = atoi(getenv("POSY"));
   else posy = 0;
 
-  len = info.xres * info.yres * info.bits_per_pixel / 8;
+  len = info.xres_virtual * info.yres_virtual * info.bits_per_pixel / 8;
   buffer = mmap(NULL, len, PROT_WRITE, MAP_SHARED, fd, 0);
   gettimeofday(&start, NULL);
 
   /* Set the alpha channel to opaque across the whole image area. */
   for (i = 0; i < height; i++) {
     for (j = 0; j < width; j++) {
-      buffer[(posy + i) * info.xres * info.bits_per_pixel / 8 + (posx + j) * info.bits_per_pixel / 8 + 3] = 255;
+      buffer[(posy + i) * info.xres_virtual * info.bits_per_pixel / 8 + (posx + j) * info.bits_per_pixel / 8 + 3] = 255;
     }
   }
 
@@ -75,7 +75,7 @@ int main(int argc, char **argv)
         } while (++c < iters);
 
         for (n = 0; n < 3; n++) {
-          buffer[(posy + i) * info.xres * info.bits_per_pixel / 8 + (posx + j) * info.bits_per_pixel / 8 + n] = c * 255 / iters;
+          buffer[(posy + i) * info.xres_virtual * info.bits_per_pixel / 8 + (posx + j) * info.bits_per_pixel / 8 + n] = c * 255 / iters;
         }
       }
     }

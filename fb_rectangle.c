@@ -46,7 +46,7 @@ int main(int argc, char **argv)
   if (getenv("POSY")) posy = atoi(getenv("POSY"));
   else posy = 0;
 
-  len = info.xres * info.yres * info.bits_per_pixel / 8;
+  len = info.xres_virtual * info.yres_virtual * info.bits_per_pixel / 8;
   buffer = mmap(NULL, len, PROT_WRITE, MAP_SHARED, fd, 0);
   w = width >> 2;
   h = height >> 2;
@@ -60,7 +60,7 @@ int main(int argc, char **argv)
     b = rand() % 256;
     x = rand() % (width - w);
     y = rand() % (height - h);
-    data = buffer + (posy + y) * info.xres * info.bits_per_pixel / 8 + (posx + x) * info.bits_per_pixel / 8;
+    data = buffer + (posy + y) * info.xres_virtual * info.bits_per_pixel / 8 + (posx + x) * info.bits_per_pixel / 8;
 
     for (i = 0; i < h; i++) {
       for (j = 0; j < w; j++) {
@@ -69,7 +69,7 @@ int main(int argc, char **argv)
         data[info.bits_per_pixel / 8 * j + 1] = g;
         data[info.bits_per_pixel / 8 * j    ] = b;
       }
-      data += info.xres * info.bits_per_pixel / 8;
+      data += info.xres_virtual * info.bits_per_pixel / 8;
     }
 
     count++;
